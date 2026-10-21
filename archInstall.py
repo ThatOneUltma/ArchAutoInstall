@@ -21,12 +21,16 @@ partitionSetup = ["echo" "-e" "',1G\n,4G\n;'" "|" "sfdisk" + installDisk]
 formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "1"]
 makeSwapFile = ["mkswap", installDisk + "2"]
 formatMainPartition = ["mkfs.ext4", installDisk + "3"]
-mountDisk = ["mount", "--mkdir", installDisk + "1", "/mnt/boot", "&&", "mount", installDisk + "3", "/mnt", "&&", "swapon", installDisk + "2"]
+mountDisk = ["mount", "--mkdir", installDisk + "1", "/mnt/boot"]
+mountMain = ["mount", installDisk + "3", "/mnt"]
+swapEnable = ["swapon", installDisk + "2"]
 
 sub.call(formatBootPartition)
 sub.call(makeSwapFile)
 sub.call(formatMainPartition)
 sub.call(mountDisk)
+sub.call(mountMain)
+sub.call(swapEnable)
 sub.call("lsblk")
 input("sad")
 sub.call(bootstrapLinux)
