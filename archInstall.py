@@ -23,9 +23,9 @@ makeSwapFile = ["mkswap", installDisk + "2"]
 formatMainPartition = ["mkfs.ext4", installDisk + "3"]
 mountDisk = ["mount", "--mkdir", installDisk + "1", "/mnt/boot", "&&", "mount", installDisk + "3", "/mnt", "&&", "swapon", installDisk + "2"]
 
-sub.call(bootstrapLinux)
 sub.call(formatBootPartition)
 sub.call(makeSwapFile)
 sub.call(formatMainPartition)
 sub.call(mountDisk)
+sub.call(bootstrapLinux)
 sub.call(installDesktop)
