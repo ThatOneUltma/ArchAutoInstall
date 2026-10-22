@@ -22,7 +22,7 @@ pacstrap = ["pacstrap", "-K", "/mnt", ]
 pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
 bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
-installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
+installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo", "git"]
 currentDir = str(terminalCommand("pwd"))
 
 ## im not making an entire function for something that only needs to run once broh
@@ -81,5 +81,5 @@ input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + 
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
 print(currentDir + "ArchAutoInstall.py")
-terminalCommand(["cp", currentDir + "ArchAutoInstall.py", "/mnt/"])
+terminalCommand(["cd" "/mnt", "&&" "git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstall.git"])
 terminalCommand(["arch-chroot" "/mnt", "python", "ArchAutoInstall.py"])
