@@ -21,8 +21,8 @@ def terminalCommand(ListOfCommands: list):
 pacstrap = ["pacstrap", "-K", "/mnt", ]
 pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
-bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
-installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo", "git"]
+bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python", "git"]
+installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
 currentDir = str(terminalCommand("pwd"))
 
 ## im not making an entire function for something that only needs to run once broh
