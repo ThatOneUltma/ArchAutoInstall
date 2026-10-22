@@ -1,6 +1,8 @@
 import subprocess as sub
 import sys
 
+areWeInChroot = terminalCommand(["systemd-detect-virt", "--chroot"]) ##we are all #erbitingdasun
+
 def terminalCommand(ListOfCommands: list):
     exitCode = sub.call(ListOfCommands)
     if exitCode != 0 and areWeInChroot == 0: ##oh that? thats the if statment that holds the entire script together!
@@ -14,7 +16,7 @@ def terminalCommand(ListOfCommands: list):
         return exitCode 
 
 
-areWeInChroot = terminalCommand(["systemd-detect-virt", "--chroot"]) ##we are all #erbitingdasun
+
 pacstrap = ["pacstrap", "-K", "/mnt", ]
 pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
