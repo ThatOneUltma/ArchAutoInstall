@@ -14,6 +14,7 @@ def terminalCommand(ListOfCommands: list):
         sys.exit(exitCode)
     else:
         print("no errors")
+        return any
 
 
 
