@@ -1,4 +1,5 @@
 import subprocess as sub
+import sys
 
 def terminalCommand(ListOfCommands: list):
     exitCode = sub.call(ListOfCommands)
@@ -8,6 +9,7 @@ def terminalCommand(ListOfCommands: list):
        #print(f"Command output: {exitCode.stdout}") get commented bich
         print(f"Return code: {exitCode}")
         return exitCode
+        sys.exit(exitCode)
     else:
         return exitCode 
 
