@@ -1,15 +1,15 @@
 import subprocess as sub
 
 def terminalCommand(commandOrListOfCommands: str, list = None):
-    sub.call([commandOrListOfCommands], capture_output=True, text=True)
-    if res.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
+    exitCode = sub.call([commandOrListOfCommands], capture_output=True, text=True)
+    if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
         print("!! ERROR  CAUGHT !!")
         print(f"Last executed command: {commandOrListOfCommands}")
-        print(f"Command output: {res.stdout}")
-        print(f"Return code: {res.returncode}")
-        return res.returncode
+        print(f"Command output: {exitCode.stdout}")
+        print(f"Return code: {exitCode.returncode}")
+        return exitCode.returncode
     else:
-        return res.returncode 
+        return exitCode.returncode 
 
 
 areWeInChroot = terminalCommand(["systemd-detect-virt", "--chroot"]) ##we are all #erbitingdasun
@@ -37,11 +37,6 @@ if areWeInChroot == 0:
     
     terminalCommand(installDesktop)
     terminalCommand(installYay)
-
-
-
-
-
 
 
 terminalCommand("lsblk")
