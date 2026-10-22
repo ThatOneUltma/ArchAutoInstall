@@ -4,7 +4,7 @@ import sys
 
 
 
-areWeInChroot = exitCode = sub.call(["systemd-detect-virt", "--chroot"]) ##we are all #erbitingdasun ##note: dunno if this will even work lol
+areWeInChroot = exitCode = sub.call(["systemd-detect-virt", "--chroot"]) ##we are all #erbitingdasun ##note: dunno if this will even work lol ## addendum: it does!
 
 
 def terminalCommand(ListOfCommands: list):
@@ -14,10 +14,9 @@ def terminalCommand(ListOfCommands: list):
         print(f"Last executed command: {ListOfCommands}")
        #print(f"Command output: {exitCode.stdout}") get commented bich
         print(f"Return code: {exitCode}")
-        return exitCode
         sys.exit(exitCode)
     else:
-        return exitCode 
+        print("no errors")
 
 
 
@@ -26,7 +25,7 @@ pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
 bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
 installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
-currentDir = terminalCommand("pwd")
+currentDir: str = terminalCommand("pwd")
 
 ## im not making an entire function for something that only needs to run once broh
 print("Checking for updates...")
