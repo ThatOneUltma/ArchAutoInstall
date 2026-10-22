@@ -1,7 +1,7 @@
 import subprocess as sub
 
 def terminalCommand(ListOfCommands: list):
-    exitCode = sub.call(ListOfCommands, text=True)
+    exitCode = sub.call(ListOfCommands)
     if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
         print("!! ERROR  CAUGHT !!")
         print(f"Last executed command: {ListOfCommands}")
