@@ -1,10 +1,7 @@
 import subprocess as sub
 import sys
 
-
-
-
-areWeInChroot = exitCode = sub.call(["systemd-detect-virt", "--chroot"]) ##we are all #erbitingdasun ##note: dunno if this will even work lol
+areWeInChroot = exitCode = sub.call(["systemd-detect-virt", "--chroot"]) ##note: dunno if this will even work lol ##addendum: It does!
 
 
 def terminalCommand(ListOfCommands: list):
@@ -40,7 +37,7 @@ if areWeInChroot == 0:
     isUserSudo = input(f"is {username} a sudo account?")
     terminalCommand(["useradd", username])
     terminalCommand(["su", username])
-    terminalCommand(["passwd", password])
+    terminalCommand(["passwd", userPassword])
     
     terminalCommand(installDesktop)
     terminalCommand(installYay)
@@ -76,7 +73,8 @@ def mountDiskAndEnableSwap():
 input(f"!! WARNING !! THIS WILL ERASE EVERYTHING ON {installDisk}! [Enter to continue, CTRL + C to exit]")
 input(f"!! FINAL WARNING!! THIS IS PERMANENT AND ALL DATA ON {installDisk} WILL BE LOST FOREVER! [Enter to install, CTRL + C to exit]")
 
-
+formatDiskAndMakeSwap()
+mountDiskAndEnableSwap()
 terminalCommand("lsblk")
 input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + C) AND SUBMIT AN ISSUE!]")
 terminalCommand(bootstrapLinux)
