@@ -1,6 +1,20 @@
 import subprocess as sub
 import sys
 
+
+#this is a horrid and stinky hack but fuck it (heh buttfuck it)
+def terminalCommand(ListOfCommands: list):
+    exitCode = sub.call(ListOfCommands)
+    if exitCode != 0 and areWeInChroot == 0: ##oh that? thats the if statment that holds the entire script together!
+        print("!! ERROR  CAUGHT !!")
+        print(f"Last executed command: {ListOfCommands}")
+       #print(f"Command output: {exitCode.stdout}") get commented bich
+        print(f"Return code: {exitCode}")
+        return exitCode
+        sys.exit(exitCode)
+    else:
+        return exitCode 
+
 areWeInChroot = terminalCommand(["systemd-detect-virt", "--chroot"]) ##we are all #erbitingdasun
 
 def terminalCommand(ListOfCommands: list):
