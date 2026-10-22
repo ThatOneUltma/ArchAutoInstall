@@ -1,6 +1,6 @@
 import subprocess as sub
 
-def terminalCommand(commandOrListOfCommands: str list = None):
+def terminalCommand(commandOrListOfCommands: list):
     exitCode = sub.call([commandOrListOfCommands], text=True)
     if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
         print("!! ERROR  CAUGHT !!")
