@@ -3,6 +3,12 @@ import sys
 import os ##importing an entire library to use one command once :sob:
 
 areWeInChroot = sub.run(["systemd-detect-virt", "--chroot"]) ##note: dunno if this will even work lol ##addendum: It does!
+pacstrap = ["pacstrap", "-K", "/mnt", ]
+pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
+installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
+bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
+installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
+getThisScript = ["git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstall.git"]
 
 sub.run(["lsblk"])
 disk = input("Which disk should be used for this install? (just put sd[letter] or nvme[number] ): ")
@@ -36,21 +42,6 @@ def terminalCommand(ListOfCommands: list): ##horrible nesting remind me to KMS l
 
 terminalCommand(["touch", "install.log"])
 
-
-
-pacstrap = ["pacstrap", "-K", "/mnt", ]
-pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
-installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
-bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
-installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
-getThisScript = ["git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstall.git"]
-currentDir = str(terminalCommand(["pwd"]))
-
-## im not making an entire function for something that only needs to run once broh
-print("Checking for updates...")
-terminalCommand(["pacman", "-Syy", "--noconfirm", "--needed", "git"])
-terminalCommand(["git", "pull", "https://github.com/ThatOneUltma/ArchAutoInstall.git"])
-
 """
 ========================================
 STEP 2 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -67,6 +58,11 @@ if areWeInChroot == 0:
     
     terminalCommand(installDesktop)
     terminalCommand(installYay)
+
+## im not making an entire function for something that only needs to run once broh
+print("Checking for updates...")
+terminalCommand(["pacman", "-Syy", "--noconfirm", "--needed", "git"])
+terminalCommand(["git", "pull", "https://github.com/ThatOneUltma/ArchAutoInstall.git"])
 
 """
 ========================================
@@ -100,7 +96,6 @@ terminalCommand(["lsblk"])
 input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + C) AND SUBMIT AN ISSUE!]")
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
-print(currentDir + "ArchAutoInstall.py")
 os.chdir("/mnt/")
 terminalCommand(getThisScript)
-terminalCommand(["arch-chroot", "/mnt", "python", "/ArchAutoInstall/ArchAutoInstall.py"])
+terminalCommand(["arch-chroot", "/mnt", "python", "ArchAutoInstall.py"])
