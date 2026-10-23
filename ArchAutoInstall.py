@@ -1,5 +1,6 @@
 import subprocess as sub
 import sys
+import os ##importing an entire library to use one command once :sob:
 
 areWeInChroot = sub.run(["systemd-detect-virt", "--chroot"]) ##note: dunno if this will even work lol ##addendum: It does!
 
@@ -98,6 +99,6 @@ input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + 
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
 print(currentDir + "ArchAutoInstall.py")
-sub.run(["cd", "/mnt", shell=True]) ##yucky hack but i dont want to figure a better solution out
+sub.run(["cd", "/mnt", shell=True])
 terminalCommand(getThisScript)
 terminalCommand(["arch-chroot", "/mnt", "python", "ArchAutoInstall.py"])
