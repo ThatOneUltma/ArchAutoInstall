@@ -1,28 +1,43 @@
 import subprocess as sub
 import sys
 
-areWeInChroot = exitCode = sub.call(["systemd-detect-virt", "--chroot"]) ##note: dunno if this will even work lol ##addendum: It does!
+areWeInChroot = sub.run(["systemd-detect-virt", "--chroot"]) ##note: dunno if this will even work lol ##addendum: It does!
 
+sub.run(["lsblk"])
+disk = input("Which disk should be used for this install? (just put sd[letter] or nvme[number] ): ")
+sanitisedDisk = disk.lower()
+match(sanitisedDisk):
+    case sanitisedDisk if "nvme" in sanitisedDisk:
+        diskPrefix = "n1p"
+    case sanitisedDisk if "mmcblk" in sanitisedDisk:
+        diskPrefix = "p"
+    case _:
+        diskPrefix = ""
+installDisk = "/dev/" + sanitisedDisk + diskPrefix
 
 def terminalCommand(ListOfCommands: list):
-    exitCode = sub.call(ListOfCommands)
-    if exitCode != 0 and areWeInChroot == 0: ##oh that? thats the if statment that holds the entire script together!
+    exitCode = sub.run(ListOfCommands)
+    if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
         print("!! ERROR  CAUGHT !!")
         print(f"Last executed command: {ListOfCommands}")
-       #print(f"Command output: {exitCode.stdout}") get commented bich
-        print(f"Return code: {exitCode}")
-        sys.exit(exitCode)
+        print(f"Command output: {exitCode.stdout}")
+        print(f"Return code: {exitCode.returncode}")
+        sys.exit(exitCode.returncode)
     else:
         print("no errors")
         return any
 
-
+if exitCode.returncode != "0":
+    terminalCommand(["umount", "/mnt"])
+    terminalCommand(["umount", "/mnt/boot"])
+    terminalCommand(["swapoff", installDisk + "2"])
 
 pacstrap = ["pacstrap", "-K", "/mnt", ]
 pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
-bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python", "git"]
+bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
 installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
+getThisScript = ["git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstall.git"]
 currentDir = str(terminalCommand("pwd"))
 
 ## im not making an entire function for something that only needs to run once broh
@@ -30,7 +45,11 @@ print("Checking for updates...")
 terminalCommand(["pacman", "-Syy", "--noconfirm", "--needed", "git"])
 terminalCommand(["git", "pull", "https://github.com/ThatOneUltma/ArchAutoInstall.git"])
 
-
+"""
+========================================
+STEP 2 BELOW \/\/\/\/\/\/\/\/\/\/\/\/\/
+========================================
+"""
 
 if areWeInChroot == 0:
     username = input("What is your username?: ")
@@ -43,16 +62,11 @@ if areWeInChroot == 0:
     terminalCommand(installDesktop)
     terminalCommand(installYay)
 
-
-terminalCommand("lsblk")
-disk = input("Which disk should be used for this install? (just put sd[letter] or nvme[number] ): ")
-sanitisedDisk = disk.lower()
-if "nvme" in sanitisedDisk:
-    diskPrefix = "n1p"
-else:
-    diskPrefix = ""
-
-installDisk = "/dev/" + sanitisedDisk + diskPrefix
+"""
+========================================
+STEP 1 BELOW \/\/\/\/\/\/\/\/\/\/\/\/\/
+=======================================
+"""
 
 def formatDiskAndMakeSwap():
     partitionSetup = ["echo" "-e" "',1G\n,4G\n;'" "|" "sfdisk" + installDisk]
@@ -81,5 +95,6 @@ input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + 
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
 print(currentDir + "ArchAutoInstall.py")
-terminalCommand(["cd", "/mnt", "&&", "git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstall.git"])
+terminalCommand(["cd", "/mnt"])
+terminalCommand(getThisScript)
 terminalCommand(["arch-chroot", "/mnt", "python", "ArchAutoInstall.py"])
