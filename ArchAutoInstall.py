@@ -44,7 +44,7 @@ installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.a
 bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
 installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
 getThisScript = ["git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstall.git"]
-currentDir = str(terminalCommand("pwd"))
+currentDir = str(terminalCommand(["pwd"]))
 
 ## im not making an entire function for something that only needs to run once broh
 print("Checking for updates...")
@@ -53,7 +53,7 @@ terminalCommand(["git", "pull", "https://github.com/ThatOneUltma/ArchAutoInstall
 
 """
 ========================================
-STEP 2 BELOW
+STEP 2 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ========================================
 """
 
@@ -70,8 +70,8 @@ if areWeInChroot == 0:
 
 """
 ========================================
-STEP 1 BELOW
-=======================================
+STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+========================================
 """
 
 def formatDiskAndMakeSwap():
@@ -96,11 +96,11 @@ input(f"!! FINAL WARNING!! THIS IS PERMANENT AND ALL DATA ON {installDisk} WILL 
 
 formatDiskAndMakeSwap()
 mountDiskAndEnableSwap()
-terminalCommand("lsblk")
+terminalCommand(["lsblk"])
 input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + C) AND SUBMIT AN ISSUE!]")
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
 print(currentDir + "ArchAutoInstall.py")
 os.chdir("/mnt/")
 terminalCommand(getThisScript)
-terminalCommand(["arch-chroot", "/mnt", "python", "ArchAutoInstall.py"])
+terminalCommand(["arch-chroot", "/mnt", "python", "/ArchAutoInstall/ArchAutoInstall.py"])
