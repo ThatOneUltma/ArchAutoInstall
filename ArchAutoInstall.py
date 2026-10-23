@@ -16,7 +16,7 @@ match(sanitisedDisk):
 installDisk = "/dev/" + sanitisedDisk + diskPrefix
 
 def terminalCommand(ListOfCommands: list):
-    exitCode = sub.run(ListOfCommands, shell=True)
+    exitCode = sub.run(ListOfCommands)
     if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
         print("!! ERROR  CAUGHT !!")
         print(f"Last executed command: {ListOfCommands}")
@@ -98,6 +98,6 @@ input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + 
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
 print(currentDir + "ArchAutoInstall.py")
-terminalCommand(["cd", "/mnt"])
+sub.run(["cd", "/mnt", shell=True]) ##yucky hack but i dont want to figure a better solution out
 terminalCommand(getThisScript)
 terminalCommand(["arch-chroot", "/mnt", "python", "ArchAutoInstall.py"])
