@@ -59,11 +59,6 @@ if areWeInChroot == 0:
     terminalCommand(installDesktop)
     terminalCommand(installYay)
 
-## im not making an entire function for something that only needs to run once broh
-print("Checking for updates...")
-terminalCommand(["pacman", "-Syy", "--noconfirm", "--needed", "git"])
-terminalCommand(["git", "pull", "https://github.com/ThatOneUltma/ArchAutoInstall.git"])
-
 """
 ========================================
 STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
