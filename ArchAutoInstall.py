@@ -48,7 +48,7 @@ STEP 2 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ========================================
 """
 
-if areWeInChroot == 0:
+if areWeInChroot.returncode == 0:
     username = input("What is your username?: ")
     userPassword = input(f"What is your password for {username}?: ")
     isUserSudo = input(f"is {username} a sudo account?")
