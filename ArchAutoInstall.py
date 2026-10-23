@@ -22,15 +22,18 @@ def terminalCommand(ListOfCommands: list):
         print(f"Last executed command: {ListOfCommands}")
         print(f"Command output: {exitCode.stdout}")
         print(f"Return code: {exitCode.returncode}")
+        terminalCommand(["umount", "/mnt"])
+        terminalCommand(["umount", "/mnt/boot"])
+        terminalCommand(["swapoff", installDisk + "2"])
         sys.exit(exitCode.returncode)
     else:
         print("no errors")
         return any
 
-if exitCode.returncode != "0":
-    terminalCommand(["umount", "/mnt"])
-    terminalCommand(["umount", "/mnt/boot"])
-    terminalCommand(["swapoff", installDisk + "2"])
+
+
+
+
 
 pacstrap = ["pacstrap", "-K", "/mnt", ]
 pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
@@ -47,7 +50,7 @@ terminalCommand(["git", "pull", "https://github.com/ThatOneUltma/ArchAutoInstall
 
 """
 ========================================
-STEP 2 BELOW \/\/\/\/\/\/\/\/\/\/\/\/\/
+STEP 2 BELOW
 ========================================
 """
 
@@ -64,7 +67,7 @@ if areWeInChroot == 0:
 
 """
 ========================================
-STEP 1 BELOW \/\/\/\/\/\/\/\/\/\/\/\/\/
+STEP 1 BELOW
 =======================================
 """
 
