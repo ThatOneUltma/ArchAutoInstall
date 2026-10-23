@@ -29,7 +29,7 @@ def terminalCommand(ListOfCommands: list): ##horrible nesting remind me to KMS l
             #terminalCommand(["swapoff", installDisk + "2"])
             sys.exit(exitCode.returncode)
     else:
-        with open("install.log", "a") as logFile
+        with open("install.log", "a") as logFile:
             print(f"No errors with {ListOfCommands}", file=logFile)
             return any
 
