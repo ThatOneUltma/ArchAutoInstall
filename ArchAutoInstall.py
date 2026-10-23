@@ -23,8 +23,8 @@ def terminalCommand(ListOfCommands: list):
         print(f"Last executed command: {ListOfCommands}")
         print(f"Command output: {exitCode.stdout}")
         print(f"Return code: {exitCode.returncode}")
-        terminalCommand(["umount", "/mnt"])
-        terminalCommand(["umount", "/mnt/boot"])
+        #terminalCommand(["umount", "/mnt"])
+        #terminalCommand(["umount", "/mnt/boot"])
         #terminalCommand(["swapoff", installDisk + "2"])
         sys.exit(exitCode.returncode)
     else:
