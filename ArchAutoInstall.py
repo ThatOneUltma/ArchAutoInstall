@@ -16,23 +16,25 @@ match(sanitisedDisk):
         diskPrefix = ""
 installDisk = "/dev/" + sanitisedDisk + diskPrefix
 
-def terminalCommand(ListOfCommands: list):
+def terminalCommand(ListOfCommands: list): ##horrible nesting remind me to KMS later
     exitCode = sub.run(ListOfCommands)
     if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
-        print("!! ERROR  CAUGHT !!")
-        print(f"Last executed command: {ListOfCommands}")
-        print(f"Command output: {exitCode.stdout}")
-        print(f"Return code: {exitCode.returncode}")
-        #terminalCommand(["umount", "/mnt"])
-        #terminalCommand(["umount", "/mnt/boot"])
-        #terminalCommand(["swapoff", installDisk + "2"])
-        sys.exit(exitCode.returncode)
+        with open("install.log", "a") as logFile:
+            print("!! ERROR  CAUGHT !!", file=logFile)
+            print(f"Last executed command: {ListOfCommands}", file=logFile)
+            print(f"Command output: {exitCode.stdout}", file=logFile)
+            print(f"Return code: {exitCode.returncode}", file=logFile)
+            #terminalCommand(["umount", "/mnt"])
+            #terminalCommand(["umount", "/mnt/boot"])
+            #terminalCommand(["swapoff", installDisk + "2"])
+            sys.exit(exitCode.returncode)
     else:
-        print("no errors")
-        return any
+        with open("install.log", "a") as logFile
+            print(f"No errors with {ListOfCommands}", file=logFile)
+            return any
 
 
-
+terminalCommand(["touch", "install.log"])
 
 
 
