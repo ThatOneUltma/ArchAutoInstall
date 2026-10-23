@@ -8,7 +8,7 @@ pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
 bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
 installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
-getThisScript = ["git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstall.git"]
+currentDir = os.getcwd()
 
 sub.run(["lsblk"])
 disk = input("Which disk should be used for this install? (just put sd[letter] or nvme[number] ): ")
@@ -96,5 +96,5 @@ terminalCommand(["lsblk"])
 input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + C) AND SUBMIT AN ISSUE!]")
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
-terminalCommand(["cp", "/ArchAutoInstall/ArchAutoInstall.py", "/mnt/tmp"])
+terminalCommand(["cp", currentDir + "ArchAutoInstall.py", "/mnt/tmp"])
 terminalCommand(["arch-chroot", "/mnt", "python", "/tmp/ArchAutoInstall.py"])
