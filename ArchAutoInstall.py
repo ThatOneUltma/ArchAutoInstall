@@ -97,4 +97,4 @@ input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + 
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
 terminalCommand(["cp", currentDir + "/ArchAutoInstall.py", "/mnt/tmp"])
-terminalCommand(["arch-chroot", "/mnt", "python", "/tmp/ArchAutoInstall.py"])
+terminalCommand(["arch-chroot", "/mnt", "python", "/mnt/tmp/ArchAutoInstall.py"])
