@@ -2,13 +2,14 @@ import subprocess as sub
 import sys
 import os ##importing an entire library to use one command once :sob:
 
-areWeInChroot = sub.run(["systemd-detect-virt", "--chroot"]) ##note: dunno if this will even work lol ##addendum: It does!
+weAreInChroot = sub.run(["systemd-detect-virt", "--chroot"]) ##note: dunno if this will even work lol ##addendum: It does!
 pacstrap = ["pacstrap", "-K", "/mnt", ]
 pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
 bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
 installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
 currentDir = os.getcwd()
+bootConfigFile = ["default  arch.conf\n", "timeout  4\n", "console-mode max\n", "editor   no"]
 
 sub.run(["lsblk"])
 disk = input("Which disk should be used for this install? (just put sd[letter] or nvme[number] ): ")
@@ -48,14 +49,33 @@ STEP 2 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ========================================
 """
 
-if areWeInChroot.returncode == 0:
+if weAreInChroot.returncode == 0:
     username = input("What is your username?: ")
     userPassword = input(f"What is your password for {username}?: ")
-    isUserSudo = input(f"is {username} a sudo account?")
     terminalCommand(["useradd", username])
+    isUserSudo = input(f"is {username} a sudo account?(Y/N)")
+    match(isUserSudo.lower()):
+        case "y":
+            terminalCommand(["usermod", "-aG", "wheel", username])
+            terminalCommand([pacman, "nano"])
+            terminalCommand(["export", "EDITOR=nano"])
+            input('Go to the bottom of the file and uncomment "%wheel ALL=(ALL:ALL) ALL" will ya? (Enter to continue)')
+            terminalCommand(["visudo"])
+            test = sub.run(["sudo", "whoami"])
+            if test.stdout != "root"
+            input(f"There was an error with making {username} a superuser! I dunno what since I cant see what you uncommented but hey! you can keep trucking (Enter) or exit the script. (CTRL + C)")
+            print("Alright, we keep on goin...")
+        case "n":
+            print(f"Fine, Its not like {username} wanted to be a stupid superuser anyways *Hmph*")
+    terminalCommand(["bootctl", "install"])
+    with open("/boot/loader/loader.conf", "w") as bootConfig:
+        bootConfig.write(bootConfigFile)
+        print(f"this should have written {bootConfigFile}")
+        print("this is what was written")
+        terminalCommand(["cat", "/boot/loader/loader.conf"])
+        input("Break tiem!")
     terminalCommand(["su", username])
-    terminalCommand(["passwd", userPassword])
-    
+    terminalCommand(["passwd"])
     terminalCommand(installDesktop)
     terminalCommand(installYay)
 
@@ -92,4 +112,4 @@ input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + 
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
 terminalCommand(["cp", currentDir + "/ArchAutoInstall.py", "/mnt/"])
-terminalCommand(["arch-chroot", "/mnt", "python", "/mnt/ArchAutoInstall.py"])
+terminalCommand(["arch-chroot", "-S", "/mnt", "python", "/mnt/ArchAutoInstall.py"])
