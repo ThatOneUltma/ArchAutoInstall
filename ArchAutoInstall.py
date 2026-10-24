@@ -62,7 +62,7 @@ if weAreInChroot.returncode == 0:
             input('Go to the bottom of the file and uncomment "%wheel ALL=(ALL:ALL) ALL" will ya? (Enter to continue)')
             terminalCommand(["visudo"])
             test = sub.run(["sudo", "whoami"])
-            if test.stdout != "root"
+            if test.stdout != "root":
                 input(f"There was an error with making {username} a superuser! I dunno what since I cant see what you uncommented but hey! you can keep trucking (Enter) or exit the script. (CTRL + C)")
                 print("Alright, we keep on goin...")
         case "n":
