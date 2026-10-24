@@ -90,6 +90,7 @@ def formatDiskAndMakeSwap():
     formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "1"]
     makeSwapFile = ["mkswap", installDisk + "2"]
     formatMainPartition = ["mkfs.ext4", installDisk + "3"]
+    terminalCommand(partitionSetup)
     terminalCommand(formatBootPartition)
     terminalCommand(formatMainPartition)
     terminalCommand(makeSwapFile)
