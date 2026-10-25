@@ -86,7 +86,8 @@ STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 """
 
 def formatDiskAndMakeSwap():
-    partitionSetup = ["echo", "-e ',1G\n,4G\n;' |", "sfdisk", installDisk]
+    standardConfig = ",1G\n,4G\n;"
+    partitionSetup = ["sfdisk", installDisk], input=standardConfig
     formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "1"]
     makeSwapFile = ["mkswap", installDisk + "2"]
     formatMainPartition = ["mkfs.ext4", installDisk + "3"]
