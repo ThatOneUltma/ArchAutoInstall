@@ -22,8 +22,8 @@ match(sanitisedDisk):
         diskPrefix = ""
 installDisk = "/dev/" + sanitisedDisk + diskPrefix
 
-def terminalCommand(ListOfCommands: list): ##horrible nesting remind me to KMS later
-    exitCode = sub.run(ListOfCommands)
+def terminalCommand(ListOfCommands: list, text: bool = True, input = None): ##horrible nesting remind me to KMS later
+    exitCode = sub.run(ListOfCommands, text=text, input=input)
     if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
         with open("install.log", "a") as logFile:
             print("!! ERROR  CAUGHT !!", file=logFile)
@@ -52,7 +52,7 @@ if weAreInChroot.returncode == 0:
     username = input("What is your username?: ")
     userPassword = input(f"What is your password for {username}?: ")
     terminalCommand(["useradd", username])
-    isUserSudo = input(f"is {username} a sudo account?(Y/N)")
+    isUserSudo:str = input(f"is {username} a sudo account?(Y/N)")
     match(isUserSudo.lower()):
         case "y":
             terminalCommand(["usermod", "-aG", "wheel", username])
@@ -61,11 +61,13 @@ if weAreInChroot.returncode == 0:
             input('Go to the bottom of the file and uncomment "%wheel ALL=(ALL:ALL) ALL" will ya? (Enter to continue)')
             terminalCommand(["visudo"])
             test = sub.run(["sudo", "whoami"])
-            if test.stdout != "root":
+            if str(test.stdout) == "root":
                 input(f"There was an error with making {username} a superuser! I dunno what since I cant see what you uncommented but hey! you can keep trucking (Enter) or exit the script. (CTRL + C)")
                 print("Alright, we keep on goin...")
         case "n":
             print(f"Fine, Its not like {username} wanted to be a stupid superuser anyways *Hmph*")
+        case _:
+            print("ok... asuming no becuase thats the easier option right now.")
     terminalCommand(["bootctl", "install"])
     with open("/boot/loader/loader.conf", "w") as bootConfig:
         bootConfig.write(bootConfigFile)
@@ -85,11 +87,11 @@ STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 """
 
 def formatDiskAndMakeSwap():
-    standardConfig = ",1G\n,4G\n;"
+    standardConfig = str(",1G\n,4G\n;")
     formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "1"]
     makeSwapFile = ["mkswap", installDisk + "2"]
     formatMainPartition = ["mkfs.ext4", installDisk + "3"]
-    sub.run(["sfdisk", installDisk], input=standardConfig)
+    terminalCommand(["sfdisk", installDisk], input=standardConfig)
     terminalCommand(formatBootPartition)
     terminalCommand(formatMainPartition)
     terminalCommand(makeSwapFile)
