@@ -15,7 +15,7 @@ disk = input("Which disk should be used for this install? (just put sd[letter] o
 sanitisedDisk = disk.lower()
 match(sanitisedDisk):
     case sanitisedDisk if "nvme" in sanitisedDisk:
-        diskPrefix = "n1p"
+        diskPrefix = "n1"
     case sanitisedDisk if "mmcblk" in sanitisedDisk:
         diskPrefix = "p"
     case _:
@@ -88,18 +88,18 @@ STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 def formatDiskAndMakeSwap():
     standardConfig = str(",1G\n,4G\n;")
-    formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "1"]
-    makeSwapFile = ["mkswap", installDisk + "2"]
-    formatMainPartition = ["mkfs.ext4", installDisk + "3"]
+    formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "p1"]
+    makeSwapFile = ["mkswap", installDisk + "p2"]
+    formatMainPartition = ["mkfs.ext4", installDisk + "p3"]
     terminalCommand(["sfdisk", installDisk], input=standardConfig)
     terminalCommand(formatBootPartition)
     terminalCommand(formatMainPartition)
     terminalCommand(makeSwapFile)
 
 def mountDiskAndEnableSwap():
-    mountBoot = ["mount", "--mkdir", installDisk + "1", "/mnt/boot"]
-    mountMain = ["mount", installDisk + "3", "/mnt"]
-    enableSwap = ["swapon", installDisk + "2"]
+    mountBoot = ["mount", "--mkdir", installDisk + "p1", "/mnt/boot"]
+    mountMain = ["mount", installDisk + "p3", "/mnt"]
+    enableSwap = ["swapon", installDisk + "p2"]
     terminalCommand(mountBoot)
     terminalCommand(enableSwap)
     terminalCommand(mountMain)
