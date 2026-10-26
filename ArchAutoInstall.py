@@ -9,8 +9,7 @@ installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.a
 bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
 installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
 currentDir = os.getcwd()
-bootConfigFile = ["default  arch.conf\n", "timeout  4\n", "console-mode max\n", "editor   no"]
-
+bootConfigFile: str = str(["default  arch.conf\n", "timeout  4\n", "console-mode max\n", "editor   no"])
 sub.run(["lsblk"])
 disk = input("Which disk should be used for this install? (just put sd[letter] or nvme[number] ): ")
 sanitisedDisk = disk.lower()
@@ -87,11 +86,10 @@ STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 def formatDiskAndMakeSwap():
     standardConfig = ",1G\n,4G\n;"
-    partitionSetup = ["sfdisk", installDisk], input=standardConfig
     formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "1"]
     makeSwapFile = ["mkswap", installDisk + "2"]
     formatMainPartition = ["mkfs.ext4", installDisk + "3"]
-    terminalCommand(partitionSetup)
+    sub.run(["sfdisk", installDisk], input=standardConfig)
     terminalCommand(formatBootPartition)
     terminalCommand(formatMainPartition)
     terminalCommand(makeSwapFile)
