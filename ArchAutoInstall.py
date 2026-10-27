@@ -21,7 +21,7 @@ match(sanitisedDisk):
     case _:
         diskPrefix = ""
 installDisk = "/dev/" + sanitisedDisk
-installDiskWithPrefix = "/dev/" + installDisk + diskPrefix
+installDiskWithPrefix = installDisk + diskPrefix
 
 def terminalCommand(ListOfCommands: list, text: bool = True, input = None): ##horrible nesting remind me to KMS later ##Note: doesnt fuckign work btw killing myself right now
     exitCode = sub.run(ListOfCommands, text=text, input=input)
