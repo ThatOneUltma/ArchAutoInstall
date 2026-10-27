@@ -117,4 +117,4 @@ terminalCommand(["git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstal
 terminalCommand(["pwd"])
 terminalCommand(["ls"])
 input("")
-terminalCommand(["arch-chroot", "mnt", "python", "mnt/ArchAutoInstall/ArchAutoInstall.py"])
+terminalCommand(["arch-chroot", "/mnt", "python", "root/mnt/ArchAutoInstall/ArchAutoInstall.py"])
