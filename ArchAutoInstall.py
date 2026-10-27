@@ -20,9 +20,10 @@ match(sanitisedDisk):
         diskPrefix = "p"
     case _:
         diskPrefix = ""
-installDisk = "/dev/" + sanitisedDisk + diskPrefix
+installDisk = "/dev/" + sanitisedDisk
+installDiskWithPrefix = "/dev/" + installDisk + diskPrefix
 
-def terminalCommand(ListOfCommands: list, text: bool = True, input = None): ##horrible nesting remind me to KMS later
+def terminalCommand(ListOfCommands: list, text: bool = True, input = None): ##horrible nesting remind me to KMS later ##Note: doesnt fuckign work btw killing myself right now
     exitCode = sub.run(ListOfCommands, text=text, input=input)
     if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
         with open("install.log", "a") as logFile:
@@ -30,9 +31,6 @@ def terminalCommand(ListOfCommands: list, text: bool = True, input = None): ##ho
             print(f"Last executed command: {ListOfCommands}", file=logFile)
             print(f"Command output: {exitCode.stdout}", file=logFile)
             print(f"Return code: {exitCode.returncode}", file=logFile)
-            #terminalCommand(["umount", "/mnt"])
-            #terminalCommand(["umount", "/mnt/boot"])
-            #terminalCommand(["swapoff", installDisk + "2"])
             sys.exit(exitCode.returncode)
     else:
         with open("install.log", "a") as logFile:
@@ -88,18 +86,18 @@ STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 def formatDiskAndMakeSwap():
     standardConfig = str(",1G\n,4G\n;")
-    formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "p1"]
-    makeSwapFile = ["mkswap", installDisk + "p2"]
-    formatMainPartition = ["mkfs.ext4", installDisk + "p3"]
-    terminalCommand(["sfdisk", installDisk], input=standardConfig)
+    formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "1"]
+    makeSwapFile = ["mkswap", installDiskWithPrefix + "2"]
+    formatMainPartition = ["mkfs.ext4", installDiskWithPrefix + "3"]
+    terminalCommand(["sfdisk", installDiskWithPrefix], input=standardConfig)
     terminalCommand(formatBootPartition)
     terminalCommand(formatMainPartition)
     terminalCommand(makeSwapFile)
 
 def mountDiskAndEnableSwap():
-    mountBoot = ["mount", "--mkdir", installDisk + "p1", "/mnt/boot"]
-    mountMain = ["mount", installDisk + "p3", "/mnt"]
-    enableSwap = ["swapon", installDisk + "p2"]
+    mountBoot = ["mount", "--mkdir", installDiskWithPrefix + "1", "/mnt/boot"]
+    mountMain = ["mount", installDiskWithPrefix + "3", "/mnt"]
+    enableSwap = ["swapon", installDiskWithPrefix + "2"]
     terminalCommand(mountBoot)
     terminalCommand(enableSwap)
     terminalCommand(mountMain)
