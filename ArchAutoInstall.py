@@ -46,7 +46,7 @@ STEP 2 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ========================================
 """
 
-if weAreInChroot.returncode == 0:
+if weAreInChroot.returncode == None:
     username = input("What is your username?: ")
     userPassword = input(f"What is your password for {username}?: ")
     terminalCommand(["useradd", username])
