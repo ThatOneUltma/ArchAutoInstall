@@ -57,7 +57,6 @@ if weAreInChroot.returncode == 0:
     match(isUserSudo.lower()):
         case "y":
             terminalCommand(["usermod", "-aG", "wheel", username])
-            terminalCommand([pacman, "nano"])
             terminalCommand(["export", "EDITOR=nano"])
             input('Go to the bottom of the file and uncomment "%wheel ALL=(ALL:ALL) ALL" will ya? (Enter to continue)')
             terminalCommand(["visudo"])
