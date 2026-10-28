@@ -7,8 +7,8 @@ weAreInChroot = sub.run(["systemd-detect-virt", "--chroot"]) ##note: dunno if th
 pacstrap = ["pacstrap", "-K", "/mnt", ]
 pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
-bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
-installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo", "nano"]
+bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python", "nano"]
+installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
 currentDir = os.getcwd()
 bootConfigFile: str = str(["default  arch.conf\n", "timeout  4\n", "console-mode max\n", "editor   no"])
 sub.run(["lsblk"])
