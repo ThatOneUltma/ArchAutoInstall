@@ -23,7 +23,8 @@ match(sanitisedDisk):
         diskPrefix = "p"
     case _:
         diskPrefix = ""
-installDisk = "/dev/" + sanitisedDisk + diskPrefix
+installDisk = "/dev/" + sanitisedDisk
+installDiskWithPrefix = installDisk + diskPrefix
 
 def terminalCommand(ListOfCommands: list, text: bool = True, input = None, env = None): ##horrible nesting remind me to KMS later
     exitCode = sub.run(ListOfCommands, text=text, input=input, env=env)
@@ -101,9 +102,9 @@ STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 def formatDiskAndMakeSwap():
     standardConfig = str(",1G\n,4G\n;")
-    formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "p1"]
-    makeSwapFile = ["mkswap", installDisk + "p2"]
-    formatMainPartition = ["mkfs.ext4", installDisk + "p3"]
+    formatBootPartition = ["mkfs.fat", "-F", "32", installDiskWithPrefix + "p1"]
+    makeSwapFile = ["mkswap", installDiskWithPrefix + "p2"]
+    formatMainPartition = ["mkfs.ext4", installDiskWithPrefix + "p3"]
     terminalCommand(["sfdisk", installDisk], input=standardConfig)
     terminalCommand(formatBootPartition)
     terminalCommand(formatMainPartition)
