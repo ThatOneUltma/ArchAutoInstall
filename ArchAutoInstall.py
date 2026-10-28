@@ -102,18 +102,18 @@ STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 def formatDiskAndMakeSwap():
     standardConfig = str(",1G\n,4G\n;")
-    formatBootPartition = ["mkfs.fat", "-F", "32", installDiskWithPrefix + "p1"]
-    makeSwapFile = ["mkswap", installDiskWithPrefix + "p2"]
-    formatMainPartition = ["mkfs.ext4", installDiskWithPrefix + "p3"]
+    formatBootPartition = ["mkfs.fat", "-F", "32", installDiskWithPrefix]
+    makeSwapFile = ["mkswap", installDiskWithPrefix]
+    formatMainPartition = ["mkfs.ext4", installDiskWithPrefix]
     terminalCommand(["sfdisk", installDisk], input=standardConfig)
     terminalCommand(formatBootPartition)
     terminalCommand(formatMainPartition)
     terminalCommand(makeSwapFile)
 
 def mountDiskAndEnableSwap():
-    mountBoot = ["mount", "--mkdir", installDisk + "p1", "/mnt/boot"]
-    mountMain = ["mount", installDisk + "p3", "/mnt"]
-    enableSwap = ["swapon", installDisk + "p2"]
+    mountBoot = ["mount", "--mkdir", installDiskWithPrefix, "/mnt/boot"]
+    mountMain = ["mount", installDiskWithPrefix,"/mnt"]
+    enableSwap = ["swapon", installDiskWithPrefixWithPrefix]
     terminalCommand(mountBoot)
     terminalCommand(enableSwap)
     terminalCommand(mountMain)
