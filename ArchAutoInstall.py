@@ -7,7 +7,7 @@ pacstrap = ["pacstrap", "-K", "/mnt", ]
 pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
 bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python"]
-installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
+installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo", "nano"]
 currentDir = os.getcwd()
 bootConfigFile: str = str(["default  arch.conf\n", "timeout  4\n", "console-mode max\n", "editor   no"])
 sub.run(["lsblk"])
@@ -20,10 +20,9 @@ match(sanitisedDisk):
         diskPrefix = "p"
     case _:
         diskPrefix = ""
-installDisk = "/dev/" + sanitisedDisk
-installDiskWithPrefix = installDisk + diskPrefix
+installDisk = "/dev/" + sanitisedDisk + diskPrefix
 
-def terminalCommand(ListOfCommands: list, text: bool = True, input = None): ##horrible nesting remind me to KMS later ##Note: doesnt fuckign work btw killing myself right now
+def terminalCommand(ListOfCommands: list, text: bool = True, input = None): ##horrible nesting remind me to KMS later
     exitCode = sub.run(ListOfCommands, text=text, input=input)
     if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
         with open("install.log", "a") as logFile:
@@ -31,6 +30,9 @@ def terminalCommand(ListOfCommands: list, text: bool = True, input = None): ##ho
             print(f"Last executed command: {ListOfCommands}", file=logFile)
             print(f"Command output: {exitCode.stdout}", file=logFile)
             print(f"Return code: {exitCode.returncode}", file=logFile)
+            #terminalCommand(["umount", "/mnt"])
+            #terminalCommand(["umount", "/mnt/boot"])
+            #terminalCommand(["swapoff", installDisk + "2"])
             sys.exit(exitCode.returncode)
     else:
         with open("install.log", "a") as logFile:
@@ -45,8 +47,8 @@ terminalCommand(["touch", "install.log"])
 STEP 2 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 ========================================
 """
-
-if weAreInChroot.returncode == None:
+print(f"Chroot detection returncode = {weAreInChroot.returncode}")
+if weAreInChroot.returncode == 0:
     username = input("What is your username?: ")
     userPassword = input(f"What is your password for {username}?: ")
     terminalCommand(["useradd", username])
@@ -86,18 +88,18 @@ STEP 1 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 def formatDiskAndMakeSwap():
     standardConfig = str(",1G\n,4G\n;")
-    formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "1"]
-    makeSwapFile = ["mkswap", installDiskWithPrefix + "2"]
-    formatMainPartition = ["mkfs.ext4", installDiskWithPrefix + "3"]
-    terminalCommand(["sfdisk", installDiskWithPrefix], input=standardConfig)
+    formatBootPartition = ["mkfs.fat", "-F", "32", installDisk + "p1"]
+    makeSwapFile = ["mkswap", installDisk + "p2"]
+    formatMainPartition = ["mkfs.ext4", installDisk + "p3"]
+    terminalCommand(["sfdisk", installDisk], input=standardConfig)
     terminalCommand(formatBootPartition)
     terminalCommand(formatMainPartition)
     terminalCommand(makeSwapFile)
 
 def mountDiskAndEnableSwap():
-    mountBoot = ["mount", "--mkdir", installDiskWithPrefix + "1", "/mnt/boot"]
-    mountMain = ["mount", installDiskWithPrefix + "3", "/mnt"]
-    enableSwap = ["swapon", installDiskWithPrefix + "2"]
+    mountBoot = ["mount", "--mkdir", installDisk + "p1", "/mnt/boot"]
+    mountMain = ["mount", installDisk + "p3", "/mnt"]
+    enableSwap = ["swapon", installDisk + "p2"]
     terminalCommand(mountBoot)
     terminalCommand(enableSwap)
     terminalCommand(mountMain)
@@ -117,4 +119,4 @@ terminalCommand(["git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstal
 terminalCommand(["pwd"])
 terminalCommand(["ls"])
 input("")
-terminalCommand(["arch-chroot", "/mnt", "python", "ArchAutoInstall/ArchAutoInstall.py"])
+terminalCommand(["arch-chroot", "-S", "mnt", "python", "mnt/ArchAutoInstall/ArchAutoInstall.py"])
