@@ -10,6 +10,7 @@ installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.a
 bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python", "nano"]
 installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
 currentDir = os.getcwd()
+editor = "EDITOR=nano"
 bootConfigFile: str = str(["default  arch.conf\n", "timeout  4\n", "console-mode max\n", "editor   no"])
 sub.run(["lsblk"])
 disk = input("Which disk should be used for this install? (just put sd[letter] or nvme[number] ): ")
@@ -23,8 +24,8 @@ match(sanitisedDisk):
         diskPrefix = ""
 installDisk = "/dev/" + sanitisedDisk + diskPrefix
 
-def terminalCommand(ListOfCommands: list, text: bool = True, input = None): ##horrible nesting remind me to KMS later
-    exitCode = sub.run(ListOfCommands, text=text, input=input)
+def terminalCommand(ListOfCommands: list, text: bool = True, input = None, env = None): ##horrible nesting remind me to KMS later
+    exitCode = sub.run(ListOfCommands, text=text, input=input, env=env)
     if exitCode.returncode != 0: ##oh that? thats the if statment that holds the entire script together!
         with open("install.log", "a") as logFile:
             print("!! ERROR  CAUGHT !!", file=logFile)
@@ -57,9 +58,8 @@ if weAreInChroot.returncode == 0:
     match(isUserSudo.lower()):
         case "y":
             terminalCommand(["usermod", "-aG", "wheel", username])
-            terminalCommand(["export", "EDITOR=nano"])
             input('Go to the bottom of the file and uncomment "%wheel ALL=(ALL:ALL) ALL" will ya? (Enter to continue)')
-            terminalCommand(["visudo"])
+            terminalCommand(["visudo", env = editor])
             test = sub.run(["sudo", "whoami"])
             if str(test.stdout) == "root":
                 input(f"There was an error with making {username} a superuser! I dunno what since I cant see what you uncommented but hey! you can keep trucking (Enter) or exit the script. (CTRL + C)")
