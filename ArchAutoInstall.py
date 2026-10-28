@@ -1,6 +1,7 @@
 import subprocess as sub
 import sys
 import os ##importing an entire library to use one command once :sob:
+import getpass as passwd
 
 weAreInChroot = sub.run(["systemd-detect-virt", "--chroot"]) ##note: dunno if this will even work lol ##addendum: It does!
 pacstrap = ["pacstrap", "-K", "/mnt", ]
@@ -49,8 +50,8 @@ STEP 2 BELOW>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 """
 print(f"Chroot detection returncode = {weAreInChroot.returncode}")
 if weAreInChroot.returncode == 0:
-    username = input("What is your username?: ")
-    userPassword = input(f"What is your password for {username}?: ")
+    username:str = input("What is your username?: ")
+    userPassword:str = passwd.getpass(f"What is your password for {username}?: ")
     terminalCommand(["useradd", username])
     isUserSudo:str = input(f"is {username} a sudo account?(Y/N)")
     match(isUserSudo.lower()):
