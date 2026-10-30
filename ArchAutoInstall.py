@@ -8,11 +8,11 @@ pacstrap = ["pacstrap", "-K", "/mnt", ]
 pacman = ["pacman", "-Syyu", "--needed", "--noconfirm", ]
 installYay = pacman + ["git", "base-devel", "&&", "git", "clone", "https://aur.archlinux.org/yay.git", "&&", "cd", "yay", "&&", "makepkg", "-si", "&&", "cd", "&&", "rm -rf", "yay/"]
 bootstrapLinux = pacstrap + ["linux", "linux-firmware", "base", "python", "nano"]
-installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo"]
+installDesktop = pacman + ["plasma", "kde-applications", "plasma-login-manager", "sudo", "grub", "efibootmgr", "os-prober"]
 enableShit = ["systemctl", "enable", "NetworkManager", "plasmalogin", ]
 currentDir = os.getcwd()
-editor = "EDITOR=nano"
-bootConfigFile: str = str(["default  arch.conf\n", "timeout  4\n", "console-mode max\n", "editor   no"])
+grubInstall = ["grub-install", "--target=x86_64-efi", "--efi-directory=esp", "--bootloader-id=GRUB"]
+makegrubConfig = ["grub-mkconfig", "-o", "/boot/grub/grub.cfg"]
 sub.run(["lsblk"])
 disk = input("Which disk should be used for this install? (just put sd[letter] or nvme[number] ): ")
 sanitisedDisk = disk.lower()
@@ -70,23 +70,20 @@ if weAreInChroot.returncode == 0:
     #        print(f"Fine, Its not like {username} wanted to be a stupid superuser anyways *Hmph*")
     #    case _:
     #        print("ok... asuming no becuase thats the easier option right now.")
-    terminalCommand(["bootctl", "install"])
-    with open("/boot/loader/loader.conf", "w") as bootConfig:
-        bootConfig.write(bootConfigFile)
-        print(f"this should have written {bootConfigFile}")
-        print("this is what was written")
-        terminalCommand(["cat", "/boot/loader/loader.conf"])
-        input("Break tiem!")
     terminalCommand(["su", username])
     terminalCommand(["passwd"])
     terminalCommand(installDesktop)
+    terminalCommand(grubInstall)
+    terminalCommand(makegrubConfig)
     terminalCommand(enableShit)
     doWeInstallYae = input("Do you want to install yay? (Y/N): ")
     match(doWeInstallYae.lower()):
         case "y":
+            print("oka")
             terminalCommand(installYay)
         case "n":
             print("oka")
+            print("type 'exit' to leave chroot environment")
     if input("Do you want to reboot now? (Y/N): ").lower() == "y":
         print("Ok, Arch is supposedly installed, goog buy")
         terminalCommand(["reboot"])
@@ -125,12 +122,10 @@ formatDiskAndMakeSwap()
 mountDiskAndEnableSwap()
 terminalCommand(["lsblk"])
 input("Does everything look right? [HIT ENTER IF IT DOES OTHERWISE EXIT (CTRL + C) AND SUBMIT AN ISSUE!]")
+terminalCommand("genfstab", "")
 terminalCommand(bootstrapLinux)
 print("Step one complete! Copying file to chroot environment and continuing from there...")
 os.chdir("../")
 os.chdir("/mnt")
 terminalCommand(["git", "clone", "https://github.com/ThatOneUltma/ArchAutoInstall.git"])
-terminalCommand(["pwd"])
-terminalCommand(["ls"])
-input("")
 terminalCommand(["arch-chroot", "-S", "/mnt", "python", "ArchAutoInstall/ArchAutoInstall.py"])
