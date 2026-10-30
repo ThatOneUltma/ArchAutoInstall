@@ -110,7 +110,7 @@ def formatDiskAndMakeSwap():
     formatBootPartition = ["mkfs.fat", "-F", "32", installDiskWithPrefix + "1"]
     makeSwapFile = ["mkswap", installDiskWithPrefix + "2"]
     formatMainPartition = ["mkfs.ext4", installDiskWithPrefix + "3"]
-    sub.run(["sfdisk", installDisk], input=standardConfig)
+    sub.run(["sfdisk", installDisk], stdin=standardConfig)
     sub.run(formatBootPartition)
     sub.run(formatMainPartition)
     sub.run(makeSwapFile)
