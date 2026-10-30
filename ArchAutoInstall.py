@@ -3,7 +3,7 @@ import sys
 import os ##importing an entire library to use one command once :sob: ##nvm it gets used multiple times
 import getpass as passwd
 
-
+selectedDesktop = printKnownDesktops()
 
 def printKnownDesktops():
     knownDesktops = ["KDE Plasma", "Xfce"]
@@ -23,7 +23,7 @@ def printKnownDesktops():
             print("unkown option")
             printKnownDesktops()
 
-selectedDesktop = printKnownDesktops()
+
 
 weAreInChroot = sub.run(["systemd-detect-virt", "--chroot"]) ##note: dunno if this will even work lol ##addendum: It does!
 pacstrap = ["pacstrap", "-K", "/mnt", ]
